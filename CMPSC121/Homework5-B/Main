@@ -1,0 +1,53 @@
+//----------------------------------------------------------
+//  Name: John Janisheski
+//  E-mail Address: JohnJanisheski99@gmail.com
+//  Class: CMPSC 121, Section 003
+//  Project #: Homework 5B
+//  Due Date: March 12th
+//  Brief Project Description:  Ask the user to input a number between 1 and 15.
+//                              Make a square of X's using that number as the
+//                              length and width.
+//----------------------------------------------------------
+
+#include <iostream>
+using namespace std;
+
+int main ()
+{
+    //Initialize the variables being used
+    double length, width, counter, counter2;
+    
+    //Ask for the size of the square
+    cout << "Please enter a number between 1 and 15 (1 and 15 are valid numbers)." << endl;
+    cin >> length;
+    
+    //Check to make sure the size is an allowed number
+    while (length > 15 || length < 1)
+    {
+        cout << "Your number is not recognized, please enter a number between 1 and 15 (1 and 15 are valid numbers)." << endl;
+        cin >> length;
+    }
+    
+    //Set your counters being used in the loops
+    counter = length;
+    counter2 = length;
+    width = length;
+    
+    //Begin the outerloop to handle how long vertically the square is
+    while (counter2 > 0)
+    {
+        //Begin the nestedloop to handle how long horizontally the square is
+        while (counter > 0)
+        {
+            //This displays the X's horizontally as many times as the user requested
+            cout << "X";
+            counter--;
+        }
+        //This displays the X's vertically as many times as the user requested
+        //Also resets the other loop so we don't start missing X's
+        cout << endl;
+        counter2--;
+        counter = length;
+    }
+    return 0;
+}
