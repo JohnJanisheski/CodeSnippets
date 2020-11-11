@@ -1,0 +1,129 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Scanner;
+
+/*
+Sources: I didn't know how to get system time so I used this resource to figure out how the System.currentTimeMillis() works
+         http://tutorials.jenkov.com/java-date-time/index.html
+         I always forget how to use the arrayList.toArray function so I had to google how to do this properly, this was my resource
+         https://howtodoinjava.com/java/collections/arraylist/convert-arraylist-to-array/
+         I used the Java documentation sporadically
+         https://docs.oracle.com/javase/8/docs/api/index.html
+
+Currently working on: Speeding up Test Case 4
+
+    Best Times:
+        - Case 1 = 0.025 seconds
+        - Case 2 = 0.023 seconds
+        - Case 3 = 0.076 seconds
+        - Case 4 = 7.923 seconds
+ */
+
+public class BinaryTreeImplementationMain {
+    public static void main(String[] args) {
+        for(int i = 0; i < 1_000_000_000; i++){
+            System.out.println(i);
+        }
+
+       long startTime = System.currentTimeMillis();
+       Scanner input = null;
+       int testCaseNum = 0;
+       int countOfNumbers, target;
+       ArrayList<Integer> tmpArrayList = new ArrayList<>(0);
+       Deque<String> signStack = new ArrayDeque<String>(); // Push Items from bottom up - Pop items when displaying solutions
+       // + for add - for subtract and | for end of solution
+
+       //This try catch block is used to check to see if the file is in the proper location with the proper name.
+       //A file is being used to streamline the input of the numbers and test cases easier/more efficiently
+       try
+       {
+           //input = new Scanner(new FileInputStream("Test1.txt"));
+           //input = new Scanner(new FileInputStream("Test2.txt"));
+           //input = new Scanner(new FileInputStream("Test3.txt"));
+           //input = new Scanner(new FileInputStream("Test4.txt"));
+       }
+       catch (FileNotFoundException e)
+       {
+           System.out.println("Problem opening files. The program will now terminate");
+           System.exit(0);
+       }
+
+       countOfNumbers = input.nextInt();
+       for(int i = 0; i < countOfNumbers; i++){
+           tmpArrayList.add(input.nextInt());
+       }
+       target = input.nextInt();
+
+       //This conversion code was inspired by https://howtodoinjava.com/java/collections/arraylist/convert-arraylist-to-array/
+       Integer[] numberArray = tmpArrayList.toArray(new Integer[tmpArrayList.size()]);
+
+       BinaryTreeNode Root = new BinaryTreeNode(numberArray[0], numberArray[0]);
+
+       recursion(Root, numberArray, target, signStack);
+       displayAnswer(target, numberArray, signStack);
+       endTime(startTime);
+    }
+    public static void recursion(BinaryTreeNode R, Integer[] numberArray, int target, Deque<String> signStack){
+        int length = R.getLength();
+
+        //Check to see if the leaf is a target if the leaf is a target find the path it is on
+        if((R.getData() == target) && (numberArray.length-1 == length)){
+            findPath(R, signStack);
+        }
+        //Return when you find a leaf that isn't the target - Before leaving, remove all left Children
+        if(numberArray.length-1 == length){
+            BinaryTreeNode tmp1 = R.getParent();
+            BinaryTreeNode tmp2 = R;
+            while(tmp1.getParent() != null && (tmp1.getRightChild() == tmp2 || tmp1.getLeftChild() == R)){
+                tmp1.setLeftChildNull();
+                tmp2 = tmp1;
+                tmp1 = tmp1.getParent();
+            }
+            return;
+        }
+        length++;
+
+        R.setLeftChild((numberArray[length] + R.getData()), length, R);
+        R.setRightChild((R.getData() - numberArray[length]), length, R);
+        recursion((R.getLeftChild()), numberArray, target, signStack);
+        recursion((R.getRightChild()), numberArray, target, signStack);
+
+    }
+    public static void findPath(BinaryTreeNode R, Deque<String> signStack){
+        Deque<String> tmp = new ArrayDeque<String>();
+        while(R.getParent() != null){
+            if(R.getParent().getRightChild().getData() == R.getData())
+                tmp.add("-");
+            else if(R.getParent().getLeftChild().getData() == R.getData())
+                tmp.add("+");
+            R = R.getParent();
+        }
+        while(tmp.size() > 0){
+            signStack.add(tmp.removeLast());
+        }
+        signStack.add("|");
+    }
+    public static void displayAnswer(int target, Integer[] numberArray, Deque<String> signStack){
+        int i = 0;
+        while(signStack.size() > 0) {
+            String current = signStack.pop();
+            if (current.equals("|")) {
+                System.out.print(" " + numberArray[i] + " = " + target);
+                System.out.println(" ");
+                i = 0;
+            }
+            else {
+                System.out.print(" " + numberArray[i] + " " + current);
+                i++;
+            }
+        }
+    }
+    public static void endTime( long startTime){
+        double totalTime = (System.currentTimeMillis() - startTime) / 1000.0;
+        System.out.println(" ");
+        System.out.println(totalTime + " Seconds");
+    }
+}
