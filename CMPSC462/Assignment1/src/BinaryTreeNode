@@ -1,0 +1,54 @@
+public class BinaryTreeNode {
+    private int data;
+    private BinaryTreeNode leftChild;
+    private BinaryTreeNode rightChild;
+    private int length;
+    private BinaryTreeNode parent;
+
+    public BinaryTreeNode(int d,int k, int l, BinaryTreeNode left, BinaryTreeNode right, BinaryTreeNode p){
+        this.data = d;
+        this.leftChild = left;
+        this.rightChild = right;
+        this.length = l;
+        this.parent = p;
+    }
+    public BinaryTreeNode(int d, int k){
+        this.data = d;
+        this.leftChild = null;
+        this.rightChild = null;
+        this.length = 0;
+        this.parent = null;
+    }
+    public BinaryTreeNode(int d, int l, BinaryTreeNode p){
+        this.data = d;
+        this.leftChild = null;
+        this.rightChild = null;
+        this.length = l;
+        this.parent = p;
+    }
+    public void setLeftChildNull(){
+        this.leftChild = null;
+    }
+    public void setLeftChild(int d, int l, BinaryTreeNode p){
+        this.leftChild = new BinaryTreeNode(d, l, p);
+
+    }
+    public void setRightChild(int d, int l, BinaryTreeNode p){
+        this. rightChild = new BinaryTreeNode(d, l, p);
+    }
+    public int getLength() {
+        return this.length;
+    }
+    public BinaryTreeNode getLeftChild(){
+        return this.leftChild;
+    }
+    public BinaryTreeNode getRightChild(){
+        return this.rightChild;
+    }
+    public int getData(){
+        return this.data;
+    }
+    public BinaryTreeNode getParent(){
+        return this.parent;
+    }
+}
