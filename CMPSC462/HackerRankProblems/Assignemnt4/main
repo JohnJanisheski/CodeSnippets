@@ -1,0 +1,127 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+
+public class Solution {
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        int addition, subtraction, multiplication, division, target;
+        int N = 1000001;
+        addition = input.nextInt();
+        subtraction = input.nextInt();
+        multiplication = input.nextInt();
+        division = input.nextInt();
+        target = input.nextInt();
+
+        ArrayDeque queue = new ArrayDeque();
+        ArrayList stack = new ArrayList();
+        HashSet hash = new HashSet();
+
+        Node targetNode = new Node(target, '-', null);
+        Node firstNode = new Node(0, '-', null);
+        queue.add(firstNode);
+
+        boolean targetNotFound = true;
+        while(targetNotFound){
+            Node tmp = (Node)queue.remove();
+            Long currentLoc = tmp.location;
+            if(targetNotFound){
+                Node additionNode = new Node(((currentLoc + addition) % N), 'a', tmp);
+                if(!hash.contains(additionNode)){
+                    queue.add(additionNode);
+                    hash.add(additionNode);
+                }
+                if(additionNode.equals(targetNode)){
+                    targetNotFound = false;
+                    stack.add('a');
+                }
+            }  //Addition
+            if(targetNotFound){
+                Node divisionNode = new Node(((currentLoc / division) % N), 'd', tmp);
+                if(!hash.contains(divisionNode)){
+                    queue.add(divisionNode);
+                    hash.add(divisionNode);
+                }
+                if(divisionNode.equals(targetNode)){
+                    targetNotFound = false;
+                    stack.add('d');
+                }
+            }  //Division
+            if(targetNotFound){
+                Node exponentiationNode = new Node(((currentLoc * currentLoc) % N), 'e', tmp);
+                if(!hash.contains(exponentiationNode)){
+                    queue.add(exponentiationNode);
+                    hash.add(exponentiationNode);
+                }
+                if(exponentiationNode.equals(targetNode)){
+                    targetNotFound = false;
+                    stack.add('e');
+                }
+            }  //Exponential
+            if(targetNotFound){
+                Node multiplicationNode = new Node(((currentLoc * multiplication) % N), 'm', tmp);
+                if(!hash.contains(multiplicationNode)){
+                    queue.add(multiplicationNode);
+                    hash.add(multiplicationNode);
+                }
+                if(multiplicationNode.equals(targetNode)){
+                    targetNotFound = false;
+                    stack.add('m');
+                }
+            }  //Multiplication
+            if(targetNotFound){
+                Node subtractionNode = new Node(((currentLoc - subtraction) + N) % N, 's', tmp);
+                if(!hash.contains(subtractionNode)){
+                    queue.add(subtractionNode);
+                    hash.add(subtractionNode);
+                }
+                if(subtractionNode.equals(targetNode)){
+                    targetNotFound = false;
+                    stack.add('s');
+                }
+            }  //Subtraction
+
+            if(!targetNotFound)
+                traverseBack((Node)tmp, stack, (Node)firstNode);
+        }
+
+        while(!stack.isEmpty())
+            System.out.print(stack.remove(stack.size()-1));
+
+    }
+
+    public static void traverseBack(Node current, ArrayList stack, Node firstNode){
+        while(!current.equals(firstNode)){
+            stack.add(current.prevOp);
+            current = current.prevNode;
+        }
+    }
+
+    public static class Node {
+    long location; // the index where we are located in the array
+    char prevOp;   // the previous operation that brought us to this location
+    Node prevNode; // the Node we were at prior to applying prevOp
+        public Node(long loc, char prevO, Node prevN){
+            location = loc;
+            prevOp = prevO;
+            prevNode = prevN;
+        }
+        @Override
+        public boolean equals(Object object){
+            if(object == null) return false;
+            if(object == this) return true;
+            if(object.getClass() != this.getClass()) return false;
+            Node that = (Node) object;
+            return (this.location == that.location);
+        }
+        @Override
+        public int hashCode(){
+            int hash = 17;
+            hash = 37*hash + (int)this.location;
+            return hash;
+        }
+    }
+}
