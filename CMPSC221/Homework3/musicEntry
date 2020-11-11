@@ -1,0 +1,86 @@
+/*
+Author:             John Janisheski
+E-mail:             JohnJanisheski99@gmail.com
+course:             CMPSC 221
+Assignment:         Homework 3 - Personal Music Library
+Due Date:           January 24th, 2019
+File:               Homework_1
+Purpose:            Java Application that creates and manipulates ArrayLists
+Compiler/IDE:       java 1.8.0_131.jdk
+Operating System:   macOS Sierra Version 10.12.6
+References:         https://docs.oracle.com/javase/8/docs/api/
+*/
+package com.company;
+
+public class musicEntry
+{
+    private  String Genre, Artist, Title, Album, ReleaseDate;
+
+    //base constructor
+    public musicEntry()
+    {
+        Genre = "No Genre";
+        Artist = "No Artist";
+        Title = "No Title";
+        Album = "No Album";
+        ReleaseDate = "1000";
+    }
+    //5 argument constructor
+    public musicEntry(String Genre, String Artist, String Title, String Album, String ReleaseDate)
+    {
+        this.Genre = Genre;
+        this.Artist = Artist;
+        this.Title = Title;
+        this.Album = Album;
+        this.ReleaseDate = ReleaseDate;
+    }
+    //return a formatted string that can be displayed
+    public String toString()
+    {
+        return ("Genre:         " + Genre + "\nArtist:        " + Artist + "\nTitle:         " + Title + "\nAlbum:         " + Album + "\nRelease Date:  " + ReleaseDate);
+        //return String.format("Genre: %20s\nArtist: %20s\nTitle: %20s\nAlbum: %20s\nRelease Date: %20d", Genre, Artist, Title, Album, ReleaseDate);
+    }
+    //The following 10 functions are different get and set methods.
+    public String getGenre()
+    {
+        return Genre;
+    }
+    public String getArtist()
+    {
+        return Artist;
+    }
+    public String getTitle()
+    {
+        return Title;
+    }
+    public String getAlbum()
+    {
+        return Album;
+    }
+    public String getReleaseDate()
+    {
+        return ReleaseDate;
+    }
+    public void setGenre(String Genre)
+    {
+        this.Genre = Genre;
+    }
+    public void setArtist(String Artist)
+    {
+        this.Artist = Artist;
+    }
+    public void setTitle(String Title)
+    {
+        this.Title = Title;
+    }
+    public void setAlbum(String Album)
+    {
+        this.Album = Album;
+    }
+    public void setReleaseDate(String ReleaseDate)
+    {
+        this.ReleaseDate = ReleaseDate;
+    }
+
+
+}
