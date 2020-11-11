@@ -1,0 +1,54 @@
+import java.io.*;
+import java.util.*;
+//Username: JohnJanisheski99
+
+public class Solution {
+    
+    
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner input = new Scanner(System.in);
+        double num1 = input.nextInt();
+        double num2 = input.nextInt();
+        PriorityQueue up = new PriorityQueue();
+        ArrayList leftAndRight = new ArrayList();
+        
+        traverse(num1, num2, up, leftAndRight);
+        Collections.reverse(leftAndRight);
+        
+        Iterator value = up.iterator();
+        while(value.hasNext())
+            System.out.println(value.next());
+        value = leftAndRight.iterator();
+        while(value.hasNext())
+            System.out.println(value.next());
+        
+    }
+    public static void traverse(double x, double y, PriorityQueue up, ArrayList leftAndRight){
+        if(x==y)
+            return;
+        if(x == 1 || (x < 2*y)){
+            if(y%2 == 0)
+                leftAndRight.add("left");
+            else
+                leftAndRight.add("right");
+            y = Math.floor(y/2);
+            traverse(x, y, up, leftAndRight);
+        }
+        else if(y == 1 || (y < 2*x)){
+            up.add("up");
+            x = Math.floor(x/2);
+            traverse(x, y, up, leftAndRight);
+        }
+        else{
+            up.add("up");
+            if(y%2 == 0)
+                leftAndRight.add("left");
+            else
+                leftAndRight.add("right");
+            x = Math.floor(x/2);
+            y = Math.floor(y/2);
+            traverse(x, y, up, leftAndRight);
+        }
+    }
+}
