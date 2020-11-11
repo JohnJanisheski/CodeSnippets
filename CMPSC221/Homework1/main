@@ -1,0 +1,138 @@
+/*
+Author:             John Janisheski
+E-mail:             JohnJanisheski99@gmail.com
+course:             CMPSC 221
+Assignment:         Homework 1 - Word Search Puzzle
+Due Date:           January 24th, 2019
+File:               Homework_1
+Purpose:            Java Application that shows manipulation of strings
+Compiler/IDE:       java 1.8.0_131.jdk
+Operating System:   macOS Sierra Version 10.12.6
+References:         https://docs.oracle.com/javase/8/docs/api/java/lang/String.html#split-java.lang.String-
+                    https://docs.oracle.com/javase/8/docs/api/
+*/
+
+package com.company;
+import java.util.Scanner;
+
+public class Main {
+
+    public static void main(String[] args)
+    {
+        //Enter general/universal variables/objects
+        Scanner Input = new Scanner(System.in);
+        String Puzzle, Word, AnswerAboutWord, AnswerAboutPlay;
+        boolean anotherPuzzle = true;
+        boolean anotherWord;
+
+        //Starts the while loop that contains the entire program used, once you don't want to run the program anymore
+        //the program leaves the loop and ends
+        while (anotherPuzzle)
+        {
+            anotherWord = true;
+            //Start by asking for the puzzle entry
+            System.out.println("Please enter a string representing a word search: ");
+            Puzzle = Input.nextLine();
+            System.out.println();
+
+            while(anotherWord)
+            {
+                //Simple loop that reads the input of the object puzzle and displays it on screen formatted
+                for (int i = 0; i < Puzzle.length(); i++) {
+                    if (Puzzle.charAt(i) == '#') {
+                        System.out.println(" ");
+                    } else {
+                        System.out.print(Puzzle.charAt(i));
+                    }
+                }
+
+                //Enter word from user
+                System.out.println(" ");
+                System.out.print("Please enter a word to search for: ");
+
+                //Turn word into uppercase for easy comparison
+                Word = Input.nextLine();
+                Word = Word.toUpperCase();
+                System.out.println(" ");
+
+                //create two strings that can be edited, one to see if it is forwards and one for backwards
+                StringBuilder CheckForward = new StringBuilder();
+                StringBuilder CheckBack = new StringBuilder();
+                boolean foundWord = false;
+
+                //Loop that runs the total length of the puzzle
+                for (int i = 0; i < Puzzle.length(); i++) {
+                    //check to see if the current letter matches the letter of the input word
+                    if (Puzzle.charAt(i) == Word.charAt(0)) {
+                        //initialize variables that will be needed to check forward and backwards letters
+                        //without losing place of your current letter
+                        int j = 0;
+                        boolean nextLetter = true;
+                        boolean previousLetter = true;
+
+                        //So long as the next letter continues to be correct, store it in the forward string
+                        while (nextLetter) {
+                            if (Word.length() == (j / 2)) {
+                                nextLetter = false;
+                            } else if (Puzzle.charAt(i + j) == Word.charAt(j / 2)) {
+                                CheckForward.append(Puzzle.charAt(i + j));
+                                j += 2;
+                            } else {
+                                nextLetter = false;
+                            }
+                        }
+                        j = 0;
+                        //So long as the previous letter continues to be correct, store it in the backwards string
+                        while (previousLetter) {
+                            if (Word.length() == (j / 2)) {
+                                previousLetter = false;
+                            } else if (Puzzle.charAt(i - j) == Word.charAt(j / 2)) {
+                                CheckBack.append(Puzzle.charAt(i - j));
+                                j += 2;
+                            } else {
+                                previousLetter = false;
+                            }
+                        }
+
+                        //If the word was found, leave the while loop saying the word was found
+                        //otherwise we reset the forwards and backwards strings and try again
+                        if (Word.equals(CheckForward.toString()) || Word.equals(CheckBack.toString())) {
+                            foundWord = true;
+                        } else {
+                            CheckForward.delete(0, CheckForward.length());
+                            CheckBack.delete(0, CheckBack.length());
+                        }
+                    }
+                }
+
+                //If the word was found, show corresponding answer
+                if (foundWord) {
+                    System.out.println("The word " + Word + " has been found!");
+                    System.out.println(" ");
+                } else {
+                    System.out.println("Sorry, This word must be in another puzzle!");
+                }
+                //Asks if you would like to search for another word (only checks to see if you don't want to)
+                System.out.print("Would you like to search for another word? (Y/N) : ");
+                AnswerAboutWord = Input.nextLine();
+
+                //If you don't want to search for another word you may still want to enter another puzzle
+                if (AnswerAboutWord.equals("N") || AnswerAboutWord.equals("n"))
+                {
+                    anotherWord = false;
+                }
+            }
+
+            System.out.print("Would you like to play again? (Y/N): ");
+            AnswerAboutPlay = Input.nextLine();
+
+            //If you don't want to play another game then the program will exit
+            //Otherwise it will start from the beginning again
+            if(AnswerAboutPlay.equals("N") || AnswerAboutPlay.equals("n"))
+            {
+                System.out.println("Thank you for Playing!");
+                anotherPuzzle = false;
+            }
+        }
+    }
+}
