@@ -1,0 +1,329 @@
+/*
+Author:             John Janisheski
+E-mail:             JohnJanisheski99@gmail.com
+course:             CMPSC 221
+Assignment:         Homework 3 - Personal Music Library
+Due Date:           January 24th, 2019
+File:               Homework_1
+Purpose:            Java Application that creates and manipulates ArrayLists
+Compiler/IDE:       java 1.8.0_131.jdk
+Operating System:   macOS Sierra Version 10.12.6
+References:         https://docs.oracle.com/javase/8/docs/api/
+*/
+package com.company;
+
+import java.*;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.ArrayList;
+
+
+public class Main
+{
+
+    public static void main(String[] args)
+    {
+
+        //The following section is just the creation of different ArrayLists, Inputs, and basic variables.
+        Scanner txtInput = null;
+        Scanner Input = new Scanner(System.in);
+        ArrayList<Integer> List = new ArrayList<>(0);
+        ArrayList<String> Artists = new ArrayList<>(0);
+        ArrayList<String> Titles = new ArrayList<>(0);
+        ArrayList<musicEntry> Library = new ArrayList<>(0);
+        ArrayList<musicEntry> playlist = new ArrayList<>(0);
+        boolean playlistHasBeenCreated = false;
+        int mainMenuInput, artistInput, titleInput, removalInput;
+        boolean running = true;
+        String LastArtist = " ";
+	      System.out.println("Creating Library...");
+	      int counter = 0;
+
+	      //This try catch block is used to check to see if the file is in the proper location with the proper name.
+        try
+        {
+            txtInput = new Scanner(new FileInputStream("SongList.txt"));
+
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println("Problem opening files. The program will now terminate");
+            System.exit(0);
+        }
+
+        //This section is the creation of the Library, Artists and Title Array Lists.
+        while(txtInput.hasNextLine())
+        {
+            String Genre = txtInput.nextLine();
+            String Artist = txtInput.nextLine();
+            String Title = txtInput.nextLine();
+            String Album = txtInput.nextLine();
+            String ReleaseDate = txtInput.nextLine();
+            Library.add(new musicEntry(Genre, Artist, Title, Album, ReleaseDate));
+            Titles.add(Title);
+
+            //This section checks to see if the there are multiple copies of the artists and always adds the name of the song.
+            if(Artist.equalsIgnoreCase(LastArtist))
+            {
+                List.add(counter);
+            }
+            if(!Artist.equalsIgnoreCase(LastArtist))
+            {
+                Artists.add(Artist);
+                counter++;
+                List.add(counter);
+            }
+            LastArtist = Artist;
+        }
+
+        //Close the input stream for the text file.
+        txtInput.close();
+        counter = 0;
+
+
+        //Begin bulk of program and continue to loop through this unless the respective option is chosen.
+	    while(running)
+	    {
+	        //Display the main menu and validate the given input.
+            mainMenuInput = validateMainMenu(mainMenu());
+
+            switch(mainMenuInput)
+            {
+                //This case "creates" an empty playlist. The playlist has already been created as it is accessed
+                //outside of the specific case. So I used a boolean variable to represent whether or not the user
+                //has access to the playlist. If the playlist has already been created, then nothing changes, but
+                //if the playlist has not already been created then give access to the playlist.
+                case(1):
+                    if(!playlistHasBeenCreated)
+                    {
+                        System.out.println("\n/*******************************************************");
+                        System.out.println("\nPlaylist has been created\n");
+                        playlistHasBeenCreated = true;
+                    }
+                    else if(playlistHasBeenCreated)
+                    {
+                        System.out.println("The Playlist has already been created, please select another option...");
+                    }
+                    break;
+
+                //This case "deletes" the previously created playlist. What it actually does is check to see if the
+                //the user has access to a playlist, if not then tell the user to create one first. If the user does
+                //have access then check to make sure the user is sure they want to delete it. If the user is sure then
+                //the program will do two things: First it will clear the playlist and then remove access to the playlist.
+                case(2):
+                    if(!playlistHasBeenCreated)
+                    {
+                        System.out.println("You need to create a playlist before anything else. Please select the first option");
+                    }
+                    else if(playlistHasBeenCreated)
+                    {
+                        System.out.println("Are you sure you'd like to delete your playlist? (Y/N) ");
+                        String answer = Input.next();
+                        if(answer.equals("Y") || answer.equals("y"))
+                        {
+                            System.out.println("Your playlist has been deleted!");
+                            playlist.clear();
+                            playlistHasBeenCreated = false;
+                        }
+                    }
+                    break;
+
+                //This case adds a song to the playlist from the library and then displays the playlist for the user.
+                case(3):
+
+                    //check to see if the user has access to the playlist.
+                    if(!playlistHasBeenCreated)
+                    {
+                        System.out.println("You need to create a playlist before anything else. Please select the first option");
+                    }
+                    else if(playlistHasBeenCreated)
+                    {
+                        //various variables that will be used to display and obtain information from the user.
+                        boolean validArtist = false;
+                        int artistCounter = 0;
+                        System.out.println("/*******************************************************");
+                        System.out.println("\nPlease choose an artist\n");
+
+                        //display the artists in a formatted way.
+                        while (Artists.size() > artistCounter)
+                        {
+                            System.out.println((artistCounter + 1) + ") " + Artists.get(artistCounter));
+                            artistCounter++;
+                        }
+                        System.out.print("Your choice: ");
+                        artistInput = Input.nextInt();
+
+                        //validate input received from user.
+                        while (!validArtist)
+                        {
+                            if (artistInput >= 1 && artistInput <= artistCounter)
+                            {
+                                validArtist = true;
+                            }
+                            else
+                            {
+                                System.out.println("Your input of " + artistInput + " is not valid. Please enter a number between 1 and " + artistCounter);
+                                artistInput = Input.nextInt();
+                            }
+                        }
+
+                        //initialize various variables that will be used to obtain and display information.
+                        boolean validSong = false;
+                        int starter = List.indexOf(artistInput);
+                        int ending = List.lastIndexOf(artistInput);
+                        int songCounter = 0;
+                        System.out.println("\n/*******************************************************");
+                        System.out.println("\nPlease choose a Song\n");
+
+                        //display the song titles in a formatted way.
+                        while (starter <= ending)
+                        {
+                            System.out.println((songCounter + 1) + ") " + Titles.get(starter));
+                            starter++;
+                            songCounter++;
+                        }
+                        System.out.print("Your choice: ");
+                        titleInput = Input.nextInt();
+
+                        //validate the input received from the user
+                        while (!validSong)
+                        {
+                            if (titleInput >= 1 && titleInput <= songCounter)
+                            {
+                                validSong = true;
+                            }
+                            else
+                            {
+                                System.out.println("Your choice of " + titleInput + " is not valid. Please enter a number between 1 and " + songCounter);
+                                titleInput = Input.nextInt();
+                            }
+                        }
+
+                        //display the chosen song
+                        starter = List.indexOf(artistInput);
+                        titleInput--;
+                        System.out.println("\nYour choice of " + Titles.get((starter + titleInput)) + " has been added to your playlist");
+
+                        //add the given song to the playlist and Then display the playlist
+                        int playlistCounter = 1;
+                        playlist.add(Library.get(starter + titleInput));
+                        for (musicEntry entry : playlist)
+                        {
+                            System.out.println("\nSelection #" + playlistCounter);
+                            System.out.println(entry);
+                            playlistCounter++;
+                        }
+                    }
+                    break;
+
+                //This case is used to remove the chosen entry of the playlist.
+                case(4):
+
+                    //validate the fact that the user has access to the playlist, validate the playlist isn't already empty
+                    boolean validRemoval = false;
+                    if(!playlistHasBeenCreated)
+                    {
+                        System.out.println("\nYou need to create a playlist before anything else. Please select the first option.");
+                    }
+                    else if(playlist.isEmpty())
+                    {
+                        System.out.println("\nYou must add a music selection before you can remove any.");
+                    }
+                    else if(playlistHasBeenCreated)
+                    {
+                        //display the current playlist
+                        System.out.println("\n/*******************************************************");
+                        System.out.println("\nDisplaying Current Playlist...");
+                        int playlistCounter = 1;
+                        for (musicEntry entry : playlist)
+                        {
+                            System.out.println("\nSelection #" + playlistCounter);
+                            System.out.println(entry);
+                            playlistCounter++;
+                        }
+                        System.out.println("Please enter the number of the entry you wish to remove");
+                        removalInput = Input.nextInt();
+
+                        //validate that the input is a valid choice based on the length of the playlist and then remove the section
+                        while(!validRemoval)
+                        {
+                            if(removalInput >= 1 && removalInput < playlistCounter)
+                            {
+                                playlist.remove((removalInput-1));
+                                validRemoval = true;
+                            }
+                            else
+                            {
+                                System.out.println("Your input of " + removalInput + " is not valid. Please enter a number between 1 and " + (playlistCounter - 1));
+                                removalInput = Input.nextInt();
+                            }
+                        }
+
+                        //finally, display the New playlist before returning to the main menu
+                        System.out.println("Selection " + removalInput + " has been removed");
+                        playlistCounter = 1;
+                        for (musicEntry entry : playlist)
+                        {
+                            System.out.println("\nSelection #" + playlistCounter);
+                            System.out.println(entry);
+                            playlistCounter++;
+                        }
+
+                    }
+                    break;
+
+                //Thanks the user for being here and exits the loop
+                case(5):
+                    System.out.println("\nThank you for using John's Personal Music Library");
+                    System.out.println("Please visit again soon!");
+                    running = false;
+                    break;
+            }
+        }
+    }
+
+    public static int mainMenu()
+    {
+        //display the main menu and return the user's choice, which will then be validated.
+        int returnValue;
+        Scanner Input = new Scanner(System.in);
+        System.out.println("\n/*******************************************************");
+        System.out.println("\nWelcome to John's Personal Music Library\n");
+        System.out.println("Please choose an option");
+        System.out.println("1) Create Playlist");
+        System.out.println("2) Delete Playlist");
+        System.out.println("3) Add Selection to Playlist");
+        System.out.println("4) Remove Selection to Playlist");
+        System.out.println("5) Quit");
+        System.out.print("Your choice: ");
+        returnValue = Input.nextInt();
+
+        return returnValue;
+    }
+    public static int validateMainMenu(int choice)
+    {
+        //validates the user's input based on the main menu and doesn't return unless the choice is valid
+        Scanner Input = new Scanner(System.in);
+        boolean validChoice = true;
+        while(validChoice)
+        {
+            if(choice < 1)
+            {
+                System.out.println("Your input " + choice + " is too low, please input a number between 1 and 5: ");
+                choice = Input.nextInt();
+            }
+            else if(choice > 5)
+            {
+                System.out.println("Your input " + choice + " is too high, please input a number between 1 and 5: ");
+                choice = Input.nextInt();
+            }
+            else if(choice > 0 && choice < 6)
+            {
+                return choice;
+            }
+        }
+        return 0;
+    }
+}
