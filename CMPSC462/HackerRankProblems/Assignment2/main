@@ -1,0 +1,51 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+import java.math.*;
+import java.util.regex.*;
+import java.lang.*;
+
+//Username: JohnJanisheski99
+
+public class Solution {
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner input = new Scanner(System.in);
+        TreeMap<String, String> parentTreeMap = new TreeMap();
+        int numOfInputs = input.nextInt();
+        String garb = input.nextLine();
+        int largest = 0;
+        String largestString = "Not Changed";
+
+        for(int i = 0; i < numOfInputs; i++){
+            String child = input.next();
+            String parent = input.next();
+            parentTreeMap.put(child, parent);
+        }
+
+        TreeMap<String, Integer> followerCount = new TreeMap();
+
+        for (Map.Entry<String, String> entry : parentTreeMap.entrySet()){
+            followerCount.put(entry.getValue(), 0);
+        }
+
+        for (Map.Entry<String, String> entry : parentTreeMap.entrySet()){
+            String tmp1 = entry.getKey();
+            String tmp2 = entry.getValue();
+            int counter = 0;
+            while(tmp2 != null){
+                tmp1 = tmp2;
+                tmp2 = parentTreeMap.get(tmp2);
+            }
+            followerCount.replace(tmp1, followerCount.get(tmp1)+1);
+        }
+        for (Map.Entry<String, Integer> entry : followerCount.entrySet()){
+            if (entry.getValue() > largest){
+                largest = entry.getValue();
+                largestString = entry.getKey();
+            }
+        }
+        System.out.println(largestString);
+     }
+}
