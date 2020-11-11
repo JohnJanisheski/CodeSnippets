@@ -1,0 +1,49 @@
+import java.io.*;
+import java.util.*;
+
+//UserName: JohnJanisheski99
+
+public class Solution {
+
+    public static void main(String[] args) {
+        /* Enter your code here. Read input from STDIN. Print output to STDOUT. Your class should be named Solution. */
+        Scanner input = new Scanner(System.in);
+        TreeSet winnersTree = new TreeSet();
+        TreeSet losersTree = new TreeSet();
+        TreeSet haveNotLostTree = new TreeSet();
+
+
+        //Populate the winner and loser trees and Maps
+        //The Maps only populate if the tree populates, therefore we keep the keys unique for the maps
+        while (input.hasNext()){
+            String team1 = input.next();
+            int score1 = Integer.parseInt(input.next());
+            String team2 = input.next();
+            int score2 = Integer.parseInt(input.next());
+            if(score1 > score2){
+                winnersTree.add(team1);
+                losersTree.add(team2);
+            }
+            else{
+                winnersTree.add(team2);
+                losersTree.add(team1);
+            }
+        }
+
+        //compares losers to winners
+        while(!winnersTree.isEmpty()){
+            if(losersTree.contains(winnersTree.first()))
+                winnersTree.remove(winnersTree.first());
+            else{
+                haveNotLostTree.add(winnersTree.first());
+                winnersTree.remove(winnersTree.first());
+            }
+        }
+
+        //displays teams that have not lost
+        while(!haveNotLostTree.isEmpty()){
+            System.out.println(haveNotLostTree.first());
+            haveNotLostTree.remove(haveNotLostTree.first());
+        }
+    }
+}
