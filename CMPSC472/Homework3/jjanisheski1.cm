@@ -1,0 +1,50 @@
+//*********************
+//** HW#3 Problem 1  **
+//**   sharenum.cm   **
+//** John Janisheski **
+//*********************
+
+/* Global Variables  */
+int Num;
+semaphore mutex;
+
+///////////////////////////////////
+void IncrementNum()
+{
+  int i;
+  for (i=1; i<=4; i=i+1)
+  {
+    wait(mutex);
+    Num = Num + i;
+    signal(mutex);
+  }
+}
+
+///////////////////////////////////
+void DecrementNum()
+{
+  int i;
+  for (i=1; i<=6; i=i+1)
+  {
+    wait(mutex);
+    Num = Num - i;
+    signal(mutex);
+  }
+}
+
+///////////////////////////////////
+///////////////////////////////////
+main()
+{
+  Num = 0;
+  signal(mutex);
+
+  cobegin {         // This will start the processs concurrently
+    IncrementNum(); 
+    IncrementNum();
+    DecrementNum();
+  }
+  cout << "The final value of Num is ";
+  cout << Num << endl;
+}
+

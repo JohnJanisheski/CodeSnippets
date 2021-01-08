@@ -1,0 +1,49 @@
+//**********************
+//**  HW#3 Problem 3  ** 
+//**      add.cm      **
+//** John Janisheski  **
+//**********************
+
+
+/* Global Variables */
+  int total;  
+  int Low1, High1, Low2, High2;
+  semaphore mutex;
+
+/////////////////////////////////////////////////////
+void add(int lower, int upper)
+//Adds numbers in the range lower to upper inclusive to total
+{
+  int i;   
+  for (i=lower;i<=upper;i++) 
+  {
+    wait(mutex);
+    total = total + i;
+    signal(mutex);
+  }
+}
+
+
+/////////////////////////////////////////////////////
+main() 
+{
+   total = 0;
+   cout << "This program will add numbers in a given range." << endl;
+   cout << "Enter the low range value ";
+   cin >> Low1;
+   cout << "Enter the high range value ";
+   cin >> High1;
+   cout << "Enter the low range of the second value ";
+   cin >> Low2;
+   cout << "Enter the high range of the second value ";
+   cin >> High2;
+
+   signal(mutex);
+   cobegin{
+     add(Low1, High1);
+     add(Low2, High2);
+   }
+   cout << "The sum of Total is: " << total << endl;
+
+} 
+

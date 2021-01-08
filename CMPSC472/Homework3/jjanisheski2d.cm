@@ -1,0 +1,74 @@
+//***************************************************
+//**        HW#3 Problem 2: part d                 **
+//**               order.cm                        **
+//**            John Janisheski                    **
+//***************************************************
+
+//----------Global Variables--------------
+semaphore mutex1;
+semaphore mutex2;
+semaphore mutex3;
+
+///////////////////////////////////
+atomic  void PrintOut(int pid)
+{
+  switch (pid)
+  {  case 1: 
+     {cout << "Process 1" << endl; break;}
+     case 2: 
+     {cout << "Process 2"  << endl; break;}
+     case 3: 
+     {cout << "Process 3" << endl; break;}
+  } 
+}
+
+
+///////////////////////////////////
+void Process1()
+{
+  int i;
+  wait(mutex1);
+  for(i = 0; i < 3; i++)
+  {
+    PrintOut(1); 
+  }
+  signal(mutex2);
+}
+
+
+///////////////////////////////////
+void Process2()
+{
+  int i;
+  wait(mutex2);
+  for(i = 0; i < 3; i++)
+  {
+    PrintOut(2); 
+  }
+  signal(mutex3);
+}
+
+
+///////////////////////////////////
+void Process3()
+{
+  int i;
+  wait(mutex3);
+  for(i = 0; i < 3; i++)
+  {
+    PrintOut(3); 
+  }
+  signal(mutex1);
+}
+
+
+///////////////////////////////////
+main()
+{
+  signal(mutex1);
+  cobegin {     // This will run all 3 processes concurrently
+    Process1(); 
+    Process2(); 
+    Process3();
+  }
+}
