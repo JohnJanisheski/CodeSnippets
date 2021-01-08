@@ -1,0 +1,130 @@
+//***************************
+//**    HW#4 Problem 1     **
+//**        hhh.cm         **
+//** Hungry, Hungry Horses **
+//**    John Janisheski    **
+//***************************
+
+/* Global Variables  */
+semaphore mutex;
+semaphore profNeeded; //10
+int feedingShed [4];
+const int DELAY = 70;
+
+atomic void Playing(int fnum)
+{
+  cout << "Foal " << fnum << " is Playing! \n";
+}
+atomic void Looking(int fnum)
+{
+  cout << " Foal " << fnum << " is hungry and is now looking for a feeding shed. \n"; //20
+}
+atomic void Waiting(int fnum)
+{
+  cout << "  Foal " << fnum << " is waiting for the sheds to be empty like a good little horse. \n";
+}
+atomic void GettingProfessor(int fnum)
+{
+  cout << "  Foal " << fnum << " Really wanted to eat so they are getting the Professor. \n";
+  signal(profNeeded);
+} //30
+atomic void Eating(int fnum)
+{
+  cout << "   Foal " << fnum << " is Eating. \n";
+}
+atomic void Leaving(int fnum)
+{
+  cout << "    Foal " << fnum << " is Leaving the feeding shed. \n";
+}
+void Play(int fnum)
+{ //40
+  int i;
+  int DelayTime;
+  Playing(fnum);
+  DelayTime = random (DELAY);
+  for (i = 0; i < DelayTime; i++);
+}
+void Eat(int fnum)
+{
+  int i;
+  int DelayTime; //50
+  Eating(fnum);
+  DelayTime = random (DELAY);
+  for (i = 0; i < DelayTime; i++);
+}
+
+void Professor()
+{
+  int i;
+  wait(profNeeded);
+  for(i = 0; i < 4; i++) //60
+  {
+    feedingShed[i] = 1;
+  }
+}
+
+void Foal(int fnum)
+{
+  int i;
+  for(i = 0; i < 5; i++)
+  {//70
+    int k;
+    int l;
+    int j;
+    Playing(fnum);
+    l = 0;
+    k = 0;
+    while(k == 0)
+    {
+      wait(mutex);
+      Looking(fnum);
+      for( j = 0; j < 4; j++) //80
+      {
+        if(feedingShed[j] == 1)
+        { 
+          l++;
+          k++;
+          feedingShed[j] = 0;;
+	  Eat(fnum);
+	  signal(mutex);
+	}//90
+      }
+      if(k > 0)
+        break;
+      Waiting(fnum);
+      wait(mutex);
+      if( l == 0)
+        GettingProfessor(fnum);
+      signal(mutex);
+    }
+  }
+}
+//100
+//////////////////////
+//////////////////////
+main()
+{
+  int i;
+  for(i = 0; i < 4; i++)
+    feedingShed[i] = 1;
+  signal(mutex);
+  cobegin {         // This will start the processs concurrently
+    Foal(1);//110
+    Foal(2);
+    Foal(3);
+    Foal(4);
+    Foal(5);
+    Foal(6);
+    Foal(7);
+    Foal(8);
+    Foal(9);
+    Foal(10);
+    Foal(11);//120
+    Foal(12);
+    Foal(13);
+    Foal(14);
+    Professor();
+  }
+  cout << "All of the Foals have eaten" << "\n";
+}
+

@@ -1,0 +1,76 @@
+//***************************
+//**    HW#4 Problem 1     **
+//**        hhh.cm         **
+//** Hungry, Hungry Horses **
+//**    John Janisheski    **
+//***************************
+
+/* Global Variables  */
+semaphore mutex;
+const int DELAY = 30;
+semaphore InsideShed = 4;
+
+atomic void Enter(int hnum)
+{
+  cout << "Horse " << hnum << " wishes to enter the feeding shed. \n";
+}
+
+atomic void Eating(int hnum)
+{
+  cout << "  Horse " << hnum << " enters the shed and eats. \n";
+}
+
+atomic void Leaving(int hnum)
+{
+  cout << "    Horse " << hnum << " is done and leaves the shed. \n";
+}
+
+void Delay()
+{
+  int i;
+  int DelayTime;
+  DelayTime = random (DELAY);
+  for (i = 0; i < DelayTime; i++);
+}
+void Horse(int hnum)
+{
+  int i;
+  Delay();
+  for (i = 0; i < 10; i++)
+  {
+    Enter(hnum);
+    wait(InsideShed);
+    Eating(hnum);
+    Delay();
+    wait(mutex);
+    Leaving(hnum);
+    signal(InsideShed);
+    signal(mutex);
+    Delay();
+  }
+}
+
+///////////////////////////////////
+///////////////////////////////////
+main()
+{
+  signal(mutex);
+  cobegin {         // This will start the processs concurrently
+    Horse(1);
+    Horse(2);
+    Horse(3);
+    Horse(4);
+    Horse(5);
+    Horse(6);
+    Horse(7);
+    Horse(8);
+    Horse(9);
+    Horse(10);
+    Horse(11);
+    Horse(12);
+    Horse(13);
+    Horse(14);
+    Horse(15);
+  }
+  cout << "All of the horses have eaten" << "\n";
+}
